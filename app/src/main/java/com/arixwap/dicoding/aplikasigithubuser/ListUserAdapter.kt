@@ -18,6 +18,8 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
         holder.binding.nameItemUser.text = name
         holder.binding.locationItemUser.text = location
         holder.binding.companyItemUser.text = company
+        // holder.binding.imgItemUser.setImageResource(avatar)
+
         Glide.with(holder.itemView.context)
             .load(avatar)
             .circleCrop()
