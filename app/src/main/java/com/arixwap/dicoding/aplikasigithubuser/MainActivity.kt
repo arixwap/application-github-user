@@ -7,16 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
     private lateinit var rvUsers: RecyclerView
     private val list = ArrayList<User>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        rvUsers = binding.rvUsers
+        rvUsers = findViewById(R.id.rv_users)
         rvUsers.setHasFixedSize(true)
 
         list.addAll(listUsers)
@@ -31,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         val repository = resources.getIntArray(R.array.repository)
         val follower = resources.getIntArray(R.array.followers)
         val following = resources.getIntArray(R.array.following)
-        val avatar = resources.getStringArray(R.array.avatar)
+        val avatar = resources.obtainTypedArray(R.array.avatar)
 
         val listUser = ArrayList<User>()
 
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 company = company[i],
                 follower = follower[i],
                 following = following[i],
-                avatar = avatar[i]
+                avatar = avatar.getResourceId(i, -1)
             )
             listUser.add(user)
         }
@@ -53,8 +51,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRecycleList() {
-        binding.rvUsers.layoutManager = LinearLayoutManager(this)
+        rvUsers.layoutManager = LinearLayoutManager(this)
         val listUserAdapter = ListUserAdapter(list)
-        binding.rvUsers.adapter = listUserAdapter
+        rvUsers.adapter = listUserAdapter
     }
 }

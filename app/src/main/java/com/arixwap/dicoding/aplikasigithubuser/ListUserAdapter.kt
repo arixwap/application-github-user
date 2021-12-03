@@ -1,5 +1,6 @@
 package com.arixwap.dicoding.aplikasigithubuser
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,13 +14,11 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (username, name, location, repository, company, follower, following, avatar) = listUser[position]
+        val (name, username, location, repository, company, follower, following, avatar) = listUser[position]
         holder.binding.usernameItemUser.text = username
         holder.binding.nameItemUser.text = name
         holder.binding.locationItemUser.text = location
         holder.binding.companyItemUser.text = company
-        // holder.binding.imgItemUser.setImageResource(avatar)
-
         Glide.with(holder.itemView.context)
             .load(avatar)
             .circleCrop()
