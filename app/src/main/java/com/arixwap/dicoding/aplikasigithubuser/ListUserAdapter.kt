@@ -1,6 +1,5 @@
 package com.arixwap.dicoding.aplikasigithubuser
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +7,10 @@ import com.arixwap.dicoding.aplikasigithubuser.databinding.ItemRowUserBinding
 import com.bumptech.glide.Glide
 
 class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    class ListViewHolder(var binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ListViewHolder {
         val binding = ItemRowUserBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         return ListViewHolder(binding)
@@ -15,7 +18,7 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val (name, username, location, repository, company, follower, following, avatar) = listUser[position]
-        holder.binding.usernameItemUser.text = username
+        holder.binding.usernameItemUser.text = "@${username}"
         holder.binding.nameItemUser.text = name
         holder.binding.locationItemUser.text = location
         holder.binding.companyItemUser.text = company
@@ -23,9 +26,19 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
             .load(avatar)
             .circleCrop()
             .into(holder.binding.imgItemUser)
+
+        holder.itemView.setOnClickListener {
+            onItemClickCallback.onItemClicked(listUser[holder.adapterPosition])
+        }
     }
 
     override fun getItemCount(): Int = listUser.size
 
-    class ListViewHolder(var binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root)
+    interface OnItemClickCallback {
+        fun onItemClicked(data: User)
+    }
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
 }

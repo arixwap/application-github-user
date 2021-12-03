@@ -7,87 +7,82 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp"/>
+
     <ImageView
         tools:src="@tools:sample/avatars"
         android:id="@+id/img_item_user"
-        android:contentDescription="Lorem Ipsum"
+        android:contentDescription="@string/lorem_ipsum"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/name_item_user"/>
+        app:layout_constraintStart_toStartOf="@id/guideline_left"/>
 
     <TextView
         android:id="@+id/name_item_user"
-        android:text="Full Name"
+        android:text="@string/text_full_name"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintTop_toTopOf="@id/img_item_user"
-        app:layout_constraintBottom_toTopOf="@id/location_item_user"
         app:layout_constraintStart_toEndOf="@id/img_item_user"
-        app:layout_constraintEnd_toStartOf="@id/username_item_user"/>
+        app:layout_constraintBottom_toTopOf="@id/location_item_user"/>
 
     <TextView
         android:id="@+id/username_item_user"
-        android:text="username"
+        android:text="@string/text_username"
         android:textSize="12sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintBaseline_toBaselineOf="@id/name_item_user"
         app:layout_constraintTop_toTopOf="@id/name_item_user"
-        app:layout_constraintBottom_toTopOf="@id/location_item_user"
         app:layout_constraintStart_toEndOf="@id/name_item_user"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="@id/guideline_right"/>
 
     <TextView
         android:id="@+id/location_item_user"
-        android:text="Location"
+        android:text="@string/text_location"
         android:textSize="12sp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center_vertical"
         android:drawablePadding="4dp"
         app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
         app:layout_constraintTop_toBottomOf="@id/name_item_user"
-        app:layout_constraintBottom_toTopOf="@id/company_item_user"
         app:layout_constraintStart_toStartOf="@id/name_item_user"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="@id/guideline_right"
+        app:layout_constraintBottom_toTopOf="@id/company_item_user"/>
 
     <TextView
         android:id="@+id/company_item_user"
-        android:text="Company"
+        android:text="@string/text_company"
         android:textSize="12sp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center_vertical"
         android:drawablePadding="4dp"
         app:drawableStartCompat="@drawable/ic_baseline_business_24"
         app:layout_constraintTop_toBottomOf="@id/location_item_user"
-        app:layout_constraintBottom_toBottomOf="@id/img_item_user"
         app:layout_constraintStart_toStartOf="@id/location_item_user"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="@id/guideline_right"
+        app:layout_constraintBottom_toBottomOf="@id/img_item_user"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Aplikasi GitHub User</string>
+    <string name="lorem_ipsum">Lorem Ipsum</string>
+    <string name="text_full_name">Full Name</string>
+    <string name="text_username">username</string>
+    <string name="text_location">Location</string>
+    <string name="text_company">Company</string>
+    <string name="text_repository">Repository</string>
+    <string name="text_followers">Followers</string>
+    <string name="text_following">Following</string>
 </resources>
