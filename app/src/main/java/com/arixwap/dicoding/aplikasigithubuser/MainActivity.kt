@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         val follower = resources.getStringArray(R.array.followers)
         val following = resources.getStringArray(R.array.following)
         val avatar = resources.obtainTypedArray(R.array.avatar)
-
         val listUser = ArrayList<User>()
 
         for (i in name.indices) {
@@ -46,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             )
             listUser.add(user)
         }
+
+        avatar.recycle()
 
         return listUser
     }

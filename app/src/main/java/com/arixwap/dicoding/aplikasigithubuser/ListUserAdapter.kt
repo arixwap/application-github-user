@@ -17,8 +17,8 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (name, username, location, repository, company, follower, following, avatar) = listUser[position]
-        holder.binding.usernameItemUser.text = "@${username}"
+        val (name, username, location, _, company, _, _, avatar) = listUser[position]
+        holder.binding.usernameItemUser.text = holder.itemView.context.resources.getString(R.string.at_username, username)
         holder.binding.nameItemUser.text = name
         holder.binding.locationItemUser.text = location
         holder.binding.companyItemUser.text = company
