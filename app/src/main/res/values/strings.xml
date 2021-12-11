@@ -14,4 +14,8 @@
     <string name="num_follower">%1$d follower</string>
     <string name="num_following">%1$d following</string>
     <string name="num_repository">%1$d repository</string>
+
+    <string name="search_hint">Masukkan nama user</string>
+    <string name="view_user">Lihat User</string>
+    <string name="user_not_found">User tidak ditemukan :(</string>
 </resources>

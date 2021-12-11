@@ -1,12 +1,13 @@
 package com.arixwap.dicoding.aplikasigithubuser
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ItemRowUserBinding
 import com.bumptech.glide.Glide
 
-class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
+class ListUserAdapter(private val listUser: List<ListUserResponse>, private val showButton: Boolean = true) : RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     class ListViewHolder(var binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root)
@@ -17,25 +18,25 @@ class ListUserAdapter(private val listUser: ArrayList<User>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (name, username, location, _, company, _, _, avatar) = listUser[position]
-        holder.binding.usernameItemUser.text = holder.itemView.context.resources.getString(R.string.at_username, username)
-        holder.binding.nameItemUser.text = name
-        holder.binding.locationItemUser.text = location
-        holder.binding.companyItemUser.text = company
+        holder.binding.usernameItemUser.text = listUser[position].login
         Glide.with(holder.itemView.context)
-            .load(avatar)
+            .load(listUser[position].avatarUrl)
             .circleCrop()
             .into(holder.binding.imgItemUser)
 
-        holder.itemView.setOnClickListener {
-            onItemClickCallback.onItemClicked(listUser[holder.adapterPosition])
+        if ( showButton ) {
+            holder.binding.btnViewUser.setOnClickListener {
+                onItemClickCallback.onItemClicked(listUser[position].login)
+            }
+        } else {
+            holder.binding.btnViewUser.visibility = View.GONE
         }
     }
 
     override fun getItemCount(): Int = listUser.size
 
     interface OnItemClickCallback {
-        fun onItemClicked(data: User)
+        fun onItemClicked(username: String)
     }
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
