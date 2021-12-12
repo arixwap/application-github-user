@@ -10,10 +10,9 @@
     <string name="text_followers">Followers</string>
     <string name="text_following">Following</string>
 
-    <string name="at_username">\@%1$s</string>
-    <string name="num_follower">%1$d follower</string>
-    <string name="num_following">%1$d following</string>
-    <string name="num_repository">%1$d repository</string>
+    <string name="num_follower">%1$s followers</string>
+    <string name="num_following">%1$s following</string>
+    <string name="num_repository">%1$s repository</string>
 
     <string name="search_hint">Masukkan nama user</string>
     <string name="view_user">Lihat User</string>
