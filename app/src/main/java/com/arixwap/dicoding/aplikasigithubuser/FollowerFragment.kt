@@ -1,5 +1,6 @@
 package com.arixwap.dicoding.aplikasigithubuser
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -40,8 +41,15 @@ class FollowerFragment(private var username: String) : Fragment() {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody?.isNotEmpty() == true) {
-                        val listUserAdapter = ListUserAdapter(listUser = responseBody, showButton = false)
+                        val listUserAdapter = ListUserAdapter(responseBody)
                         binding.rvFollower.adapter = listUserAdapter
+
+                        listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+                            override fun onItemClicked(username: String) {
+                                intentUserDetail(username)
+                            }
+                        })
+
                         isSuccess = true
                     }
                 }
@@ -55,5 +63,11 @@ class FollowerFragment(private var username: String) : Fragment() {
 
             override fun onFailure(call: Call<List<ListUserResponse>>, t: Throwable) {}
         })
+    }
+
+    private fun intentUserDetail(username: String) {
+        val detailUserIntent = Intent(activity, DetailUserActivity::class.java)
+        detailUserIntent.putExtra(DetailUserActivity.EXTRA_USERNAME, username)
+        startActivity(detailUserIntent)
     }
 }

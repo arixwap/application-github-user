@@ -35,17 +35,21 @@ class DetailUserActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<UserDetailResponse>, response: Response<UserDetailResponse>) {
                     if (response.isSuccessful) {
                         val responseBody = response.body()
-                        binding.nameDetailUser.text = responseBody?.name
-                        binding.usernameDetailUser.text = responseBody?.login
-                        if ( responseBody?.location != null ) {
+                        val username = responseBody?.login
+                        binding.nameDetailUser.text = username
+                        binding.usernameDetailUser.text = username
+                        if (responseBody?.name != null) {
+                            binding.nameDetailUser.text = responseBody.name
+                        }
+                        if (responseBody?.location != null) {
                             binding.locationDetailUser.text = responseBody.location
                             binding.locationDetailUser.visibility = View.VISIBLE
                         }
-                        if ( responseBody?.company != null ) {
+                        if (responseBody?.company != null) {
                             binding.companyDetailUser.text = responseBody.company
                             binding.companyDetailUser.visibility = View.VISIBLE
                         }
-                        if ( responseBody?.publicRepos != null ) {
+                        if (responseBody?.publicRepos != null) {
                             binding.repositoryDetailUser.text = getString(R.string.num_repository, responseBody.publicRepos)
                             binding.repositoryDetailUser.visibility = View.VISIBLE
                         }
