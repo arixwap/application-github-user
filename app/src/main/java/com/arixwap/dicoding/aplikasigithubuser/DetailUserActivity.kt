@@ -2,126 +2,94 @@ package com.arixwap.dicoding.aplikasigithubuser
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ActivityDetailUserBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.DecimalFormat
 import kotlin.math.ln
 import kotlin.math.pow
 
 class DetailUserActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailUserBinding
+    private val githubApiModel : GithubApiModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.title = "Profile Detail"
-
-        showUserDetail()
-    }
-
-    private fun showUserDetail() {
+        supportActionBar?.title = getString(R.string.profile_detail)
+        binding.run {
+            nameDetailUser.visibility = View.GONE
+            usernameDetailUser.visibility = View.GONE
+            locationDetailUser.visibility = View.GONE
+            companyDetailUser.visibility = View.GONE
+            repositoryDetailUser.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        }
         showLoading(true)
 
+        githubApiModel.userDetail.observe(this, { userDetail ->
+            showUserDetail(userDetail)
+        })
+
         val username = intent.getStringExtra(EXTRA_USERNAME)
-        var followers = 0
-        var following = 0
-
         if (username != null) {
-            val request = GithubApiConfig.getApiService().getUserDetail(username)
-            request.enqueue(object : Callback<UserDetailResponse> {
-                override fun onResponse(call: Call<UserDetailResponse>, response: Response<UserDetailResponse>) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-
-                        // Display information textview
-                        binding.usernameDetailUser.text = username
-                        if (responseBody?.name != null) {
-                            // Display user full name
-                            binding.nameDetailUser.text = responseBody.name
-                        } else {
-                            // Use username as user full name
-                            binding.nameDetailUser.text = username
-                        }
-                        if (responseBody?.location != null) {
-                            binding.locationDetailUser.text = responseBody.location
-                            binding.locationDetailUser.visibility = View.VISIBLE
-                        }
-                        if (responseBody?.company != null) {
-                            binding.companyDetailUser.text = responseBody.company
-                            binding.companyDetailUser.visibility = View.VISIBLE
-                        }
-                        if (responseBody?.publicRepos != null) {
-                            binding.repositoryDetailUser.text = getString(R.string.num_repository, prettyNumber(responseBody.publicRepos))
-                            binding.repositoryDetailUser.visibility = View.VISIBLE
-                        }
-
-                        // Display user avatar
-                        Glide.with(binding.root)
-                            .load(responseBody?.avatarUrl)
-                            .circleCrop()
-                            .into(binding.imgDetailUser)
-
-                        // Get follower & following count
-                        if (responseBody?.followers != null) {
-                            followers = responseBody.followers
-                        }
-                        if (responseBody?.following != null) {
-                            following = responseBody.following
-                        }
-                    } else {
-                        Toast.makeText(this@DetailUserActivity, response.toString(), Toast.LENGTH_SHORT).show()
-                    }
-
-                    // Display tab navigation
-                    val sectionsPagerAdapter = UserDetailTabAdapter(this@DetailUserActivity, username)
-                    val viewPager: ViewPager2 = binding.viewPagerDetailUser
-                    viewPager.adapter = sectionsPagerAdapter
-                    val tabs: TabLayout = binding.tabsDetailUser
-                    TabLayoutMediator(tabs, viewPager) { tab, position ->
-                        tab.text = when(position) {
-                            0 -> getString(R.string.num_follower, prettyNumber(followers))
-                            1 -> getString(R.string.num_following, prettyNumber(following))
-                            else -> null
-                        }
-                    }.attach()
-                    supportActionBar?.elevation = 0f
-
-                    showLoading(false)
-                }
-
-                override fun onFailure(call: Call<UserDetailResponse>, t: Throwable) {
-                    showLoading(false)
-                    Toast.makeText(this@DetailUserActivity, t.message.toString(), Toast.LENGTH_SHORT).show()
-                }
-            })
+            githubApiModel.getUserDetail(username)
         }
+    }
+
+    private fun showUserDetail(user: UserResponse) {
+        // Display basic information
+        binding.run {
+            usernameDetailUser.text = user.login
+            nameDetailUser.text = user.name ?: user.login
+            locationDetailUser.run {
+                text = user.location
+                if (user.location != null) visibility = View.VISIBLE
+            }
+            companyDetailUser.run {
+                text = user.company
+                if (user.company != null) visibility = View.VISIBLE
+            }
+            repositoryDetailUser.run {
+                text = getString(R.string.num_repository, prettyNumber(user.publicRepos))
+            }
+
+            nameDetailUser.visibility = View.VISIBLE
+            usernameDetailUser.visibility = View.VISIBLE
+            repositoryDetailUser.visibility = View.VISIBLE
+        }
+
+        // Display user avatar
+        Glide.with(binding.root)
+            .load(user.avatarUrl)
+            .circleCrop()
+            .into(binding.imgDetailUser)
+
+        // Display tab navigation
+        val sectionsPagerAdapter = UserDetailTabAdapter(this@DetailUserActivity, user.login)
+        val viewPager: ViewPager2 = binding.viewPagerDetailUser
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = binding.tabsDetailUser
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.num_follower, prettyNumber(user.followers))
+                1 -> getString(R.string.num_following, prettyNumber(user.following))
+                else -> null
+            }
+        }.attach()
+        supportActionBar?.elevation = 0f
+
+        showLoading(false)
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.imgDetailUser.visibility = View.GONE
-            binding.nameDetailUser.visibility = View.GONE
-            binding.usernameDetailUser.visibility = View.GONE
-            binding.locationDetailUser.visibility = View.GONE
-            binding.companyDetailUser.visibility = View.GONE
-            binding.repositoryDetailUser.visibility = View.GONE
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.imgDetailUser.visibility = View.VISIBLE
-            binding.nameDetailUser.visibility = View.VISIBLE
-            binding.usernameDetailUser.visibility = View.VISIBLE
-            binding.progressBar.visibility = View.GONE
-        }
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun prettyNumber(count: Int): String {

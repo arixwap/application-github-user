@@ -87,16 +87,4 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
         app:layout_constraintBottom_toBottomOf="@id/img_item_user"/>
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/linear_progress_bar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:indeterminate="true"
-        app:indicatorColor="@color/grey"
-        app:layout_constraintTop_toTopOf="@id/img_item_user"
-        app:layout_constraintStart_toEndOf="@id/img_item_user"
-        app:layout_constraintEnd_toEndOf="@id/guideline_right"
-        app:layout_constraintBottom_toBottomOf="@id/img_item_user"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

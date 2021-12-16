@@ -6,18 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arixwap.dicoding.aplikasigithubuser.databinding.FragmentFollowerBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FollowerFragment(private var username: String) : Fragment() {
-    private lateinit var binding: FragmentFollowerBinding
+    private var _binding: FragmentFollowerBinding? = null
+    private val binding get() = _binding!!
+    private val githubApiModel: GithubApiModel by activityViewModels()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentFollowerBinding.inflate(inflater)
+        _binding = FragmentFollowerBinding.inflate(inflater, container, false)
 
         val layoutManager = LinearLayoutManager(context)
         binding.rvFollower.layoutManager = layoutManager
@@ -29,45 +30,41 @@ class FollowerFragment(private var username: String) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.progressBar.visibility = View.VISIBLE
+        showLoading(true)
         binding.textMessage.visibility = View.GONE
 
-        val request = GithubApiConfig.getApiService().getUserFollower(username)
-        request.enqueue(object : Callback<List<ListUserResponse>> {
-            override fun onResponse(call: Call<List<ListUserResponse>>, response: Response<List<ListUserResponse>>) {
-                var isSuccess = false
+        githubApiModel.listFollower.observe(this, { users ->
+            if (users.isNotEmpty()) {
+                val listUserAdapter = ListUserAdapter(users)
+                binding.rvFollower.adapter = listUserAdapter
 
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody?.isNotEmpty() == true) {
-                        val listUserAdapter = ListUserAdapter(responseBody)
-                        binding.rvFollower.adapter = listUserAdapter
-
-                        listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
-                            override fun onItemClicked(username: String) {
-                                intentUserDetail(username)
-                            }
-                        })
-
-                        isSuccess = true
+                listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+                    override fun onItemClicked(username: String) {
+                        intentUserDetail(username)
                     }
-                }
-
-                if ( ! isSuccess ) {
-                    binding.rvFollower.visibility = View.GONE
-                    binding.textMessage.visibility = View.VISIBLE
-                }
-                binding.progressBar.visibility = View.GONE
+                })
+            } else {
+                binding.textMessage.visibility = View.VISIBLE
             }
 
-            override fun onFailure(call: Call<List<ListUserResponse>>, t: Throwable) {}
+            showLoading(false)
         })
+
+        githubApiModel.getUserFollower(username)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun intentUserDetail(username: String) {
         val detailUserIntent = Intent(activity, DetailUserActivity::class.java)
         detailUserIntent.putExtra(DetailUserActivity.EXTRA_USERNAME, username)
         startActivity(detailUserIntent)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

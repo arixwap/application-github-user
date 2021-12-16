@@ -7,17 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
+    private val githubApiModel : GithubApiModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,22 +27,46 @@ class MainActivity : AppCompatActivity() {
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvUsers.addItemDecoration(itemDecoration)
 
-        displayListUser()
+        githubApiModel.isLoading.observe(this, {
+            showLoading(it)
+        })
+
+        githubApiModel.listUser.observe(this, {
+            if (it.count() > 0) {
+                displayListUser(it)
+            } else {
+                binding.rvUsers.adapter = null
+                showLoading(false)
+                setMessage(getString(R.string.failed_get_data))
+            }
+        })
+
+        githubApiModel.searchUser.observe(this, {
+            if (it.totalCount > 0) {
+                displayListUser(it.items)
+            } else {
+                binding.rvUsers.adapter = null
+                showLoading(false)
+                setMessage(getString(R.string.user_not_found))
+            }
+        })
+
+        githubApiModel.getUserList()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.option_menu, menu)
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = menu?.findItem(R.id.search)?.actionView as SearchView
+        val searchView = menu.findItem(R.id.search)?.actionView as SearchView
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.queryHint = resources.getString(R.string.search_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             // Method run on search submit
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchUser(query)
+            override fun onQueryTextSubmit(search: String): Boolean {
+                githubApiModel.searchUser(search)
                 return true
             }
             // Method run on text changed
@@ -55,68 +77,13 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun displayListUser() {
-        showLoading(true)
-        val request = GithubApiConfig.getApiService().getUserList()
-        request.enqueue(object : Callback<List<ListUserResponse>> {
-            override fun onResponse(call: Call<List<ListUserResponse>>, response: Response<List<ListUserResponse>>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null ) {
-                        val listUserAdapter = ListUserAdapter(responseBody)
-                        binding.rvUsers.adapter = listUserAdapter
+    private fun displayListUser(listUser: List<UserResponse>) {
+        val listUserAdapter = ListUserAdapter(listUser)
+        binding.rvUsers.adapter = listUserAdapter
 
-                        listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
-                            override fun onItemClicked(username: String) {
-                                intentUserDetail(username)
-                            }
-                        })
-                    } else {
-                        binding.rvUsers.adapter = null
-                        showMessage(getString(R.string.user_not_found))
-                    }
-                } else {
-                    showMessage(response.toString())
-                }
-                showLoading(false)
-            }
-
-            override fun onFailure(call: Call<List<ListUserResponse>>, t: Throwable) {
-                showLoading(false)
-                Toast.makeText(this@MainActivity, t.message.toString(), Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun searchUser(searchQuery: String) {
-        showLoading(true)
-        val request = GithubApiConfig.getApiService().searchUser(searchQuery)
-        request.enqueue(object : Callback<SearchUserResponse> {
-            override fun onResponse(call: Call<SearchUserResponse>, response: Response<SearchUserResponse>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody?.totalCount!! > 0) {
-                        val listUserAdapter = ListUserAdapter(responseBody.items)
-                        binding.rvUsers.adapter = listUserAdapter
-
-                        listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
-                            override fun onItemClicked(username: String) {
-                                intentUserDetail(username)
-                            }
-                        })
-                    } else {
-                        binding.rvUsers.adapter = null
-                        showMessage(getString(R.string.user_not_found))
-                    }
-                } else {
-                    showMessage(response.toString())
-                }
-                showLoading(false)
-            }
-
-            override fun onFailure(call: Call<SearchUserResponse>, t: Throwable) {
-                showLoading(false)
-                Toast.makeText(this@MainActivity, t.message.toString(), Toast.LENGTH_SHORT).show()
+        listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+            override fun onItemClicked(username: String) {
+                intentUserDetail(username)
             }
         })
     }
@@ -128,24 +95,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.rvUsers.visibility = View.GONE
-            showMessage(null)
-        } else {
-            binding.progressBar.visibility = View.GONE
-            binding.rvUsers.visibility = View.VISIBLE
-        }
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.rvUsers.visibility = if (isLoading) View.GONE else View.VISIBLE
+
+        if (isLoading) setMessage(null)
     }
 
-    private fun showMessage(message: String? = "") {
-        if (message != null) {
-            binding.textMainMessage.visibility = View.VISIBLE
-            binding.textMainMessage.text = message
-            showLoading(false)
-        } else {
-            binding.textMainMessage.visibility = View.GONE
-            binding.textMainMessage.text = ""
+    private fun setMessage(message: String?) {
+        binding.textMainMessage.run {
+            visibility = if (message != "") View.VISIBLE else View.GONE
+            text = message ?: ""
         }
     }
 }

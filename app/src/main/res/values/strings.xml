@@ -14,7 +14,9 @@
     <string name="num_following">%1$s following</string>
     <string name="num_repository">%1$s repository</string>
 
+    <string name="profile_detail">Profile Detail</string>
     <string name="search_hint">Masukkan nama user</string>
     <string name="view_user">Lihat User</string>
     <string name="user_not_found">User tidak ditemukan :(</string>
+    <string name="failed_get_data">Galat mendapatkan data</string>
 </resources>
