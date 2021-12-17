@@ -19,4 +19,12 @@
     <string name="view_user">Lihat User</string>
     <string name="user_not_found">User tidak ditemukan :(</string>
     <string name="failed_get_data">Galat mendapatkan data</string>
+    <string name="search">Cari</string>
+    <string name="favorites">Favorites</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="setting">Setting</string>
+    <string name="favorite">Favorite</string>
+
+    <string name="favorite_added">Ditambahkan ke favorit</string>
+    <string name="favorite_removed">Dihapus dari favorit</string>
 </resources>

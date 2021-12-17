@@ -1,5 +1,6 @@
-package com.arixwap.dicoding.aplikasigithubuser
+package com.arixwap.dicoding.aplikasigithubuser.api
 
+import com.arixwap.dicoding.aplikasigithubuser.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

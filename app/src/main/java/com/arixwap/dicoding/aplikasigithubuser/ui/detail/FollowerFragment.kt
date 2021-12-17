@@ -1,4 +1,4 @@
-package com.arixwap.dicoding.aplikasigithubuser
+package com.arixwap.dicoding.aplikasigithubuser.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,21 +9,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arixwap.dicoding.aplikasigithubuser.databinding.FragmentFollowingBinding
+import com.arixwap.dicoding.aplikasigithubuser.databinding.FragmentFollowerBinding
+import com.arixwap.dicoding.aplikasigithubuser.api.GithubApiModel
+import com.arixwap.dicoding.aplikasigithubuser.helper.ListUserAdapter
 
-class FollowingFragment(private var username: String) : Fragment() {
-    private var _binding: FragmentFollowingBinding? = null
+class FollowerFragment(private var username: String) : Fragment() {
+    private var _binding: FragmentFollowerBinding? = null
     private val binding get() = _binding!!
     private val githubApiModel: GithubApiModel by activityViewModels()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentFollowingBinding.inflate(inflater, container, false)
+        _binding = FragmentFollowerBinding.inflate(inflater, container, false)
 
         val layoutManager = LinearLayoutManager(context)
-        binding.rvFollowing.layoutManager = layoutManager
+        binding.rvFollower.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-        binding.rvFollowing.addItemDecoration(itemDecoration)
+        binding.rvFollower.addItemDecoration(itemDecoration)
 
         return binding.root
     }
@@ -33,12 +35,13 @@ class FollowingFragment(private var username: String) : Fragment() {
         showLoading(true)
         binding.textMessage.visibility = View.GONE
 
-        githubApiModel.listFollowing.observe(this, { users ->
+        githubApiModel.listFollower.observe(this, { users ->
             if (users.isNotEmpty()) {
                 val listUserAdapter = ListUserAdapter(users)
-                binding.rvFollowing.adapter = listUserAdapter
+                binding.rvFollower.adapter = listUserAdapter
 
-                listUserAdapter.setOnItemClickCallback(object : ListUserAdapter.OnItemClickCallback {
+                listUserAdapter.setOnItemClickCallback(object :
+                    ListUserAdapter.OnItemClickCallback {
                     override fun onItemClicked(username: String) {
                         intentUserDetail(username)
                     }
@@ -50,7 +53,7 @@ class FollowingFragment(private var username: String) : Fragment() {
             showLoading(false)
         })
 
-        githubApiModel.getUserFollowing(username)
+        githubApiModel.getUserFollower(username)
     }
 
     override fun onDestroyView() {

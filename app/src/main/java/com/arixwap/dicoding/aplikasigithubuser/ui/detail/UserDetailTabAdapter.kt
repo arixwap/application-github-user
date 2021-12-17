@@ -1,4 +1,4 @@
-package com.arixwap.dicoding.aplikasigithubuser
+package com.arixwap.dicoding.aplikasigithubuser.ui.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment

@@ -1,13 +1,14 @@
-package com.arixwap.dicoding.aplikasigithubuser
+package com.arixwap.dicoding.aplikasigithubuser.helper
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.arixwap.dicoding.aplikasigithubuser.database.User
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ItemRowUserBinding
 import com.bumptech.glide.Glide
 
-class ListUserAdapter(private val users: List<UserResponse>) : RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
+class ListUserAdapter(private val users: List<User>) : RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     class ListViewHolder(var binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root)
@@ -42,7 +43,7 @@ class ListUserAdapter(private val users: List<UserResponse>) : RecyclerView.Adap
 
         // Set action callback on image click
         holder.binding.imgItemUser.setOnClickListener {
-            onItemClickCallback.onItemClicked(users[position].login)
+            onItemClickCallback.onItemClicked(users[position].login!!)
         }
     }
 

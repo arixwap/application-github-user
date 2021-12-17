@@ -1,4 +1,4 @@
-package com.arixwap.dicoding.aplikasigithubuser
+package com.arixwap.dicoding.aplikasigithubuser.ui.main
 
 import android.app.SearchManager
 import android.content.Context
@@ -6,12 +6,30 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arixwap.dicoding.aplikasigithubuser.R
+import com.arixwap.dicoding.aplikasigithubuser.api.GithubApiModel
+import com.arixwap.dicoding.aplikasigithubuser.database.User
 import com.arixwap.dicoding.aplikasigithubuser.databinding.ActivityMainBinding
+import com.arixwap.dicoding.aplikasigithubuser.helper.ListUserAdapter
+import com.arixwap.dicoding.aplikasigithubuser.helper.ViewModelFactory
+import com.arixwap.dicoding.aplikasigithubuser.ui.detail.DetailUserActivity
+import com.arixwap.dicoding.aplikasigithubuser.ui.favorite.FavoriteActivity
+import com.arixwap.dicoding.aplikasigithubuser.ui.setting.SettingActivity
+import com.arixwap.dicoding.aplikasigithubuser.ui.setting.SettingPreferences
+import com.arixwap.dicoding.aplikasigithubuser.ui.setting.SettingViewModel
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -26,6 +44,17 @@ class MainActivity : AppCompatActivity() {
         binding.rvUsers.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvUsers.addItemDecoration(itemDecoration)
+
+        // Set theme dark mode
+        val pref = SettingPreferences.getInstance(dataStore)
+        val settingViewModel = ViewModelProvider(this, ViewModelFactory(this.application, pref))[SettingViewModel::class.java]
+        settingViewModel.getThemeSettings().observe(this, { isDarkModeActive: Boolean ->
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        })
 
         githubApiModel.isLoading.observe(this, {
             showLoading(it)
@@ -59,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.menu.option_menu, menu)
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = menu.findItem(R.id.search)?.actionView as SearchView
+        val searchView = menu.findItem(R.id.button_search)?.actionView as SearchView
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.queryHint = resources.getString(R.string.search_hint)
@@ -77,7 +106,22 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun displayListUser(listUser: List<UserResponse>) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_setting -> {
+                val intent = Intent(this, SettingActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.menu_item_favorites -> {
+                val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        return true
+    }
+
+
+    private fun displayListUser(listUser: List<User>) {
         val listUserAdapter = ListUserAdapter(listUser)
         binding.rvUsers.adapter = listUserAdapter
 
