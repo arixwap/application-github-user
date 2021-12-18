@@ -12,8 +12,8 @@ class UserDetailTabAdapter(activity: AppCompatActivity, private var username: St
     override fun createFragment(position: Int): Fragment {
         var fragment : Fragment ?= null
         when (position) {
-            0 -> fragment = FollowerFragment(username)
-            1 -> fragment = FollowingFragment(username)
+            0 -> fragment = FollowerFragment.newInstance(username)
+            1 -> fragment = FollowingFragment.newInstance(username)
         }
         return fragment as Fragment
     }

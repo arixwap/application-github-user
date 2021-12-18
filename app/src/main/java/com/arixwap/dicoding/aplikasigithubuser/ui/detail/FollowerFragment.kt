@@ -9,56 +9,63 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arixwap.dicoding.aplikasigithubuser.databinding.FragmentFollowerBinding
 import com.arixwap.dicoding.aplikasigithubuser.api.GithubApiModel
+import com.arixwap.dicoding.aplikasigithubuser.database.User
+import com.arixwap.dicoding.aplikasigithubuser.databinding.FragmentFollowerBinding
 import com.arixwap.dicoding.aplikasigithubuser.helper.ListUserAdapter
 
-class FollowerFragment(private var username: String) : Fragment() {
+class FollowerFragment : Fragment() {
     private var _binding: FragmentFollowerBinding? = null
     private val binding get() = _binding!!
     private val githubApiModel: GithubApiModel by activityViewModels()
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFollowerBinding.inflate(inflater, container, false)
 
         val layoutManager = LinearLayoutManager(context)
-        binding.rvFollower.layoutManager = layoutManager
+        binding.rvUsers.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-        binding.rvFollower.addItemDecoration(itemDecoration)
+        binding.rvUsers.addItemDecoration(itemDecoration)
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         showLoading(true)
+        showLoading(false)
         binding.textMessage.visibility = View.GONE
 
+        val username = arguments?.getString(USERNAME)
+        githubApiModel.getUserFollower(username!!)
+
         githubApiModel.listFollower.observe(this, { users ->
-            if (users.isNotEmpty()) {
-                val listUserAdapter = ListUserAdapter(users)
-                binding.rvFollower.adapter = listUserAdapter
-
-                listUserAdapter.setOnItemClickCallback(object :
-                    ListUserAdapter.OnItemClickCallback {
-                    override fun onItemClicked(username: String) {
-                        intentUserDetail(username)
-                    }
-                })
-            } else {
-                binding.textMessage.visibility = View.VISIBLE
-            }
-
-            showLoading(false)
+            displayListUsers(users)
         })
-
-        githubApiModel.getUserFollower(username)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun displayListUsers(users: List<User>) {
+        if (users.isNotEmpty()) {
+            val listUserAdapter = ListUserAdapter(users)
+            binding.rvUsers.adapter = listUserAdapter
+
+            listUserAdapter.setOnItemClickCallback(object :
+                ListUserAdapter.OnItemClickCallback {
+                override fun onItemClicked(username: String) {
+                    intentUserDetail(username)
+                }
+            })
+        } else {
+            binding.textMessage.visibility = View.VISIBLE
+        }
+
+        showLoading(false)
     }
 
     private fun intentUserDetail(username: String) {
@@ -69,5 +76,16 @@ class FollowerFragment(private var username: String) : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    companion object {
+        private const val USERNAME = "username"
+
+        @JvmStatic
+        fun newInstance(username: String) = FollowerFragment().apply {
+            arguments = Bundle().apply {
+                putString(USERNAME, username)
+            }
+        }
     }
 }
