@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:menuCategory="container">
@@ -10,17 +9,17 @@
             android:icon="@drawable/ic_baseline_search_24"
             android:title="@string/search"
             app:actionViewClass="androidx.appcompat.widget.SearchView"
-            app:showAsAction="collapseActionView|always"/>
+            app:showAsAction="collapseActionView|always" />
 
         <item
             android:id="@+id/menu_item_favorites"
-            android:title="@string/favorites"
-            android:icon="@drawable/ic_baseline_favorite_24"/>
+            android:icon="@drawable/ic_baseline_favorite_24"
+            android:title="@string/favorites" />
 
         <item
             android:id="@+id/menu_item_setting"
-            android:title="@string/setting"
-            android:text="@string/setting"/>
+            android:text="@string/setting"
+            android:title="@string/setting" />
 
     </group>
 

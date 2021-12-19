@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Aplikasi GitHub User</string>
+    <string name="app_name">Application GitHub User</string>
 
     <string name="lorem_ipsum">Lorem Ipsum</string>
     <string name="text_full_name">Full Name</string>
@@ -7,8 +7,6 @@
     <string name="text_location">Location</string>
     <string name="text_company">Company</string>
     <string name="text_repository">Repository</string>
-    <string name="text_followers">Followers</string>
-    <string name="text_following">Following</string>
 
     <string name="num_follower">%1$s followers</string>
     <string name="num_following">%1$s following</string>
@@ -16,7 +14,6 @@
 
     <string name="profile_detail">Profile Detail</string>
     <string name="search_hint">Masukkan nama user</string>
-    <string name="view_user">Lihat User</string>
     <string name="user_not_found">User tidak ditemukan :(</string>
     <string name="failed_get_data">Galat mendapatkan data</string>
     <string name="search">Cari</string>

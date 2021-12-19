@@ -9,12 +9,14 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.arixwap.dicoding.aplikasigithubuser"
+        applicationId "com.arixwap.dicoding.applicationgithubuser"
         minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
         buildConfigField("String", "github_token", github_token)
     }
 
@@ -42,11 +44,11 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
